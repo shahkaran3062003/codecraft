@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f5f5;
+            --text-color: #333;
+            --background-color: #fff;
+            --card-background: #fff;
+            --input-background: #f0f0f0;
+            --input-border: #ddd;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+
+        .dark-mode {
+            --primary-color: #64b5f6;
+            --secondary-color: #424242;
+            --text-color: #f5f5f5;
+            --background-color: #121212;
+            --card-background: #1e1e1e;
+            --input-background: #2a2a2a;
+            --input-border: #444;
+            --box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        .signup-card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: var(--box-shadow);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            background-color: var(--input-background);
+            color: var(--text-color);
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        }
+
+        label {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            pointer-events: none;
+            transition: 0.3s;
+        }
+
+        input:focus~label,
+        input:valid~label {
+            top: 0;
+            font-size: 12px;
+            color: var(--primary-color);
+            background-color: var(--card-background);
+            padding: 0 5px;
+        }
+
+        .input-group i {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+
+        .toggle-password {
+            cursor: pointer;
+        }
+
+        .terms {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .terms input {
+            margin-right: 10px;
+            width: auto;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #3a7bc8;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background-color: #3a7bc8;
+        }
+
+        .theme-toggle .fa-sun {
+            display: none;
+        }
+
+        .dark-mode .theme-toggle .fa-sun {
+            display: inline-block;
+        }
+
+        .dark-mode .theme-toggle .fa-moon {
+            display: none;
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .password-strength {
+            height: 5px;
+            margin-top: 5px;
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            .signup-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body class="light-mode">
+    <div class="container">
+        <div class="signup-card">
+            <h2>Sign Up</h2>
+            <form id="signup-form">
+                <div class="input-group">
+                    <input type="text" id="fullname" required>
+                    <label for="fullname">Full Name</label>
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="email" required>
+                    <label for="email">Email</label>
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" required>
+                    <label for="password">Password</label>
+                    <i class="fas fa-lock"></i>
+                    <!-- <i class="fas fa-eye-slash toggle-password"></i> -->
+                </div>
+                <div class="password-strength"></div>
+                <div class="input-group">
+                    <input type="password" id="confirm-password" required>
+                    <label for="confirm-password">Confirm Password</label>
+                    <i class="fas fa-lock"></i>
+                </div>
+                <!-- <div class="input-group terms">
+                    <input type="checkbox" id="terms_" required>
+                    <label for="terms_">I agree to the Terms and Conditions</label>
+                </div> -->
+                <button type="submit">Sign Up</button>
+            </form>
+            <p class="login-link">Already have an account? <a href="#">Log in</a></p>
+        </div>
+    </div>
+    <button id="theme-toggle" class="theme-toggle">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Theme toggle
+            $('#theme-toggle').on('click', function () {
+                $('body').toggleClass('dark-mode');
+                localStorage.setItem('theme', $('body').hasClass('dark-mode') ? 'dark' : 'light');
+            });
+
+            // Load saved theme
+            if (localStorage.getItem('theme') === 'dark') {
+                $('body').addClass('dark-mode');
+            }
+
+            // Password visibility toggle
+            $('.toggle-password').on('click', function () {
+                const passwordInput = $('#password');
+                const icon = $(this);
+
+                if (passwordInput.attr('type') === 'password') {
+                    passwordInput.attr('type', 'text');
+                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                } else {
+                    passwordInput.attr('type', 'password');
+                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                }
+            });
+
+            // Password strength meter
+            $('#password').on('input', function () {
+                const password = $(this).val();
+                const strength = calculatePasswordStrength(password);
+                updatePasswordStrengthMeter(strength);
+            });
+
+            // Form validation
+            $('#signup-form').on('submit', function (e) {
+                e.preventDefault();
+
+                const fullname = $('#fullname').val().trim();
+                const email = $('#email').val().trim();
+                const password = $('#password').val().trim();
+                const confirmPassword = $('#confirm-password').val().trim();
+                const terms = $('#terms').is(':checked');
+                let isValid = true;
+
+                if (fullname.length < 2) {
+                    showError($('#fullname'), 'Please enter your full name');
+                    isValid = false;
+                } else {
+                    hideError($('#fullname'));
+                }
+
+                if (!isValidEmail(email)) {
+                    showError($('#email'), 'Please enter a valid email address');
+                    isValid = false;
+                } else {
+                    hideError($('#email'));
+                }
+
+                if (password.length < 8) {
+                    showError($('#password'), 'Password must be at least 8 characters long');
+                    isValid = false;
+                } else {
+                    hideError($('#password'));
+                }
+
+                if (password !== confirmPassword) {
+                    showError($('#confirm-password'), 'Passwords do not match');
+                    isValid = false;
+                } else {
+                    hideError($('#confirm-password'));
+                }
+
+                if (!terms) {
+                    showError($('#terms'), 'You must agree to the Terms and Conditions');
+                    isValid = false;
+                } else {
+                    hideError($('#terms'));
+                }
+
+                if (isValid) {
+                    // Here you would typically send the form data to your server
+                    alert('Sign up successful!');
+                    this.reset();
+                    $('.password-strength').css('width', '0%');
+                }
+            });
+
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+
+            function showError(input, message) {
+                const errorElement = input.siblings('.error-message');
+                if (errorElement.length === 0) {
+                    input.after(`<span class="error-message">${message}</span>`);
+                } else {
+                    errorElement.text(message);
+                }
+                input.css('border-color', 'var(--error-color)');
+            }
+
+            function hideError(input) {
+                input.siblings('.error-message').remove();
+                input.css('border-color', '');
+            }
+
+            function calculatePasswordStrength(password) {
+                let strength = 0;
+                if (password.length >= 8) strength += 1;
+                if (password.match(/[a-z]+/)) strength += 1;
+                if (password.match(/[A-Z]+/)) strength += 1;
+                if (password.match(/[0-9]+/)) strength += 1;
+                if (password.match(/[$@#&!]+/)) strength += 1;
+                return strength;
+            }
+
+            function updatePasswordStrengthMeter(strength) {
+                const percentage = (strength / 5) * 100;
+                let color;
+                if (percentage <= 30) color = '#e74c3c';
+                else if (percentage <= 60) color = '#f39c12';
+                else color = '#2ecc71';
+                $('.password-strength').css({
+                    'width': `${percentage}%`,
+                    'background-color': color
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

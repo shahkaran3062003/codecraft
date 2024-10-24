@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Clone</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f5f5;
+            --text-color: #333;
+            --background-color: #fff;
+            --chat-background: #f7f7f8;
+            --user-message-bg: #4a90e2;
+            --ai-message-bg: #f7f7f8;
+            --input-background: #f0f0f0;
+            --input-border: #ddd;
+            --sidebar-background: #202123;
+            --sidebar-text: #fff;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode {
+            --primary-color: #64b5f6;
+            --secondary-color: #424242;
+            --text-color: #f5f5f5;
+            --background-color: #121212;
+            --chat-background: #343541;
+            --user-message-bg: #64b5f6;
+            --ai-message-bg: #444654;
+            --input-background: #2a2a2a;
+            --input-border: #444;
+            --sidebar-background: #202123;
+            --sidebar-text: #fff;
+            --box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-background);
+            color: var(--sidebar-text);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s;
+        }
+
+        .sidebar-hidden .sidebar {
+            transform: translateX(-260px);
+        }
+
+        .new-chat {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .new-chat:hover {
+            background-color: #3a7bc8;
+        }
+
+        .chat-history {
+            margin-top: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .chat-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-footer {
+            margin-top: 20px;
+        }
+
+        .sidebar-footer button {
+            background: none;
+            border: none;
+            color: var(--sidebar-text);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px;
+            width: 100%;
+            text-align: left;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar-footer button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            transition: margin-left 0.3s;
+        }
+
+        .sidebar-hidden .main-content {
+            margin-left: -260px;
+        }
+
+        .chat-container {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: var(--chat-background);
+        }
+
+        .message {
+            max-width: 80%;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            line-height: 1.4;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-message {
+            background-color: var(--user-message-bg);
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        .ai-message {
+            background-color: var(--ai-message-bg);
+            color: var(--text-color);
+            align-self: flex-start;
+        }
+
+        .input-container {
+            display: flex;
+            padding: 20px;
+            background-color: var(--background-color);
+            border-top: 1px solid var(--input-border);
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: var(--input-background);
+            color: var(--text-color);
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .send-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .send-button:hover {
+            background-color: #3a7bc8;
+        }
+
+        .header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: var(--background-color);
+            border-bottom: 1px solid var(--input-border);
+        }
+
+        .header button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px 10px;
+            margin-left: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .header button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .theme-toggle,
+        .menu-toggle {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle:hover,
+        .menu-toggle:hover {
+            background-color: #3a7bc8;
+        }
+
+        .menu-toggle {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                z-index: 1000;
+                transform: translateX(-100%);
+            }
+
+            .sidebar-visible .sidebar {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+            }
+
+            .menu-toggle {
+                display: flex;
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                z-index: 1001;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar">
+        <button class="new-chat">
+            <i class="fas fa-plus"></i>
+            New Chat
+        </button>
+        <div class="chat-history">
+            <!-- Chat history items will be dynamically added here -->
+        </div>
+        <div class="sidebar-footer">
+            <button id="clear-conversations">
+                <i class="fas fa-trash"></i>
+                Clear conversations
+            </button>
+            <button id="settings">
+                <i class="fas fa-cog"></i>
+                Settings
+            </button>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="header">
+            <!-- <button id="login-btn">Log In</button>
+            <button id="register-btn">Register</button> -->
+            <!-- <button id="profile-btn">
+                <i class="fas fa-user"></i>
+            </button> -->
+            <button id="theme-toggle" class="theme-toggle">
+                <i class="fas fa-sun"></i>
+            </button>
+        </div>
+        <div class="chat-container">
+            <!-- Chat messages will be dynamically added here -->
+        </div>
+        <div class="input-container">
+            <input type="text" class="chat-input" placeholder="Type your message here...">
+            <button class="send-button">Send</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const body = document.body;
+            const themeToggle = document.getElementById('theme-toggle');
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.querySelector('.sidebar');
+            const chatInput = document.querySelector('.chat-input');
+            const sendButton = document.querySelector('.send-button');
+            const chatContainer = document.querySelector('.chat-container');
+
+            // Theme toggle
+            themeToggle.addEventListener('click', function () {
+                body.classList.toggle('dark-mode');
+                const isDarkMode = body.classList.contains('dark-mode');
+                themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            });
+
+            // Load saved theme
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+
+            // Mobile menu toggle
+            menuToggle.addEventListener('click', function () {
+                body.classList.toggle('sidebar-visible');
+            });
+
+            // Send message
+            function sendMessage() {
+                const userInput = chatInput.value.trim();
+                if (userInput) {
+                    addMessage('user', userInput);
+                    chatInput.value = '';
+
+                    // Simulate AI response
+                    setTimeout(() => {
+                        const aiResponse = generateAIResponse(userInput);
+                        addMessage('ai', aiResponse);
+                    }, 1000);
+                }
+            }
+
+            sendButton.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            function addMessage(sender, content) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', sender === 'user' ? 'user-message' : 'ai-message');
+                messageDiv.textContent = content;
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            function generateAIResponse(userInput) {
+                const responses = [
+                    "That's an interesting question. Let me think about it.",
+                    "Based on my knowledge, I would say that...",
+                    "Here's what I found on that topic:",
+                    "I'm not entirely sure, but here's my best guess:",
+                    "That's a complex issue. Let me break it down for you.",
+                ];
+                return responses[Math.floor(Math.random() * responses.length)] + " " + userInput;
+            }
+
+            // Placeholder functionality for buttons
+            document.getElementById('login-btn').addEventListener('click', () => alert('Login functionality would be implemented here.'));
+            document.getElementById('register-btn').addEventListener('click', () => alert('Registration functionality would be implemented here.'));
+            document.getElementById('profile-btn').addEventListener('click', () => alert('User profile functionality would be implemented here.'));
+            document.getElementById('clear-conversations').addEventListener('click', () => {
+                chatContainer.innerHTML = '';
+                alert('All conversations cleared.');
+            });
+            document.getElementById('settings').addEventListener('click', () => alert('Settings functionality would be implemented here.'));
+        });
+    </script>
+</body>
+
+</html>
